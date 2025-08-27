@@ -1,10 +1,11 @@
 # .NET Best Practices 🚀
 
-![.NET](https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet)  
+![.NET](https://img.shields.io/badge/.NET-9.0-blueviolet?logo=dotnet)  
 ![License](https://img.shields.io/badge/license-MIT-green)  
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)  
 
 A curated collection of **best practices, patterns, and guidelines** for building clean, scalable, and secure applications with **.NET**.  
+
 This repository is designed to help developers and teams adopt **industry-proven standards** and improve their overall software quality.
 
 ---
