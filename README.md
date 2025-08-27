@@ -1,8 +1,8 @@
 # .NET Best Practices 🚀
 
-![.NET](https://img.shields.io/badge/.NET-9.0-blueviolet?logo=dotnet)  
-![License](https://img.shields.io/badge/license-MIT-green)  
-![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)  
+[![.NET](https://img.shields.io/badge/.NET-9.0-blueviolet?logo=dotnet)](https://dotnet.microsoft.com/)  
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)  
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](./CONTRIBUTING.md)  
 
 A curated collection of **best practices, patterns, and guidelines** for building clean, scalable, and secure applications with **.NET**.  
 
