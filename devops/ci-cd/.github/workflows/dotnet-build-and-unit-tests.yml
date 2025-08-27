@@ -1,0 +1,89 @@
+name: Build and Run Unit Tests for .NET Solutions
+
+on:
+  workflow_call:
+    inputs:
+      solution:
+        description: 'The solution or project file to build'
+        type: string
+        required: true
+      test:
+        description: 'The test project or solution file to run'
+        type: string
+        required: true
+      dotnet-version:
+        description: 'The .NET version to use'
+        type: string
+        default: '9.0.x'
+        required: true
+      configuration:
+        description: 'The build configuration to use (allowed values: Debug, Release)'
+        type: string
+        default: 'Debug'
+        required: true
+      verbosity:
+        description: 'The verbosity level to use (allowed values: quiet, minimal, normal, detailed, diagnostic)'
+        type: string
+        default: 'minimal'
+        required: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update OS Packages
+        run: |
+          echo "Updating Linux packages..."
+          sudo apt-get update && sudo apt-get upgrade -y
+          echo "Finished updating Linux packages."
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate inputs
+        run: |
+          # Validate verbosity (case-insensitive)
+          ALLOWED_VERBOSITY="quiet minimal normal detailed diagnostic"
+          VERB=$(echo "${{ inputs.verbosity }}" | tr '[:upper:]' '[:lower:]')
+          if ! echo "$ALLOWED_VERBOSITY" | grep -w -q "$VERB"; then
+            echo "Invalid verbosity: '${{ inputs.verbosity }}'. Allowed values are: $ALLOWED_VERBOSITY"
+            exit 1
+          fi
+          echo "Verbosity '${{ inputs.verbosity }}' is valid."
+
+          # Validate configuration (case-insensitive: Debug or Release)
+          ALLOWED_CONFIGS="debug release"
+          CONFIG=$(echo "${{ inputs.configuration }}" | tr '[:upper:]' '[:lower:]')
+          if ! echo "$ALLOWED_CONFIGS" | grep -w -q "$CONFIG"; then
+            echo "Invalid configuration: '${{ inputs.configuration }}'. Allowed values are: Debug or Release"
+            exit 1
+          fi
+          echo "Configuration '${{ inputs.configuration }}' is valid."
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Install workloads
+        run: |
+            echo "Installing .NET workloads..."
+            dotnet workload install aspire
+            dotnet workload install wasm-tools
+            echo "Finished installing .NET workloads."
+
+      - name: Restore and Install Dependencies
+        run: dotnet restore ${{ inputs.solution }} --verbosity ${{ inputs.verbosity }}
+
+      - name: Build Solution
+        run: dotnet build ${{ inputs.solution }} --configuration ${{ inputs.configuration }} --no-restore --verbosity ${{ inputs.verbosity }}
+
+      - name: Run Unit Tests
+        run: dotnet test ${{ inputs.test }} --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.verbosity }}
+
+      - name: Publish Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ${{ github.workspace }}/test-results
+          retention-days: 5
