@@ -55,6 +55,12 @@ jobs:
     needs: validate-inputs
     runs-on: ubuntu-latest
     steps:
+      - name: Update OS packages
+        run: |
+          echo "Updating OS packages..."
+          sudo apt-get update
+          echo "Finished updating OS packages."
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -62,13 +68,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '${{ inputs.dotnet-version }}.0.x'
-
-      - name: Update OS packages
-        run: |
-          echo "Updating OS packages..."
-          sudo apt-get update
-          sudo apt-get upgrade -y
-          echo "Finished updating OS packages."
 
       - name: Install and Update .NET Workloads
         run: |
@@ -82,16 +81,25 @@ jobs:
             echo "Finished updating .NET workloads."
 
       - name: Restore and Install Application Dependencies
-        run: dotnet restore ${{ inputs.solution }} --verbosity ${{ inputs.verbosity }}
+        run: |
+          dotnet restore ${{ inputs.solution }} \
+            --verbosity ${{ inputs.verbosity }}
 
       - name: Build Application
-        run: dotnet build ${{ inputs.solution }} --configuration ${{ inputs.configuration }} --no-restore --verbosity ${{ inputs.verbosity }}
+        run: |
+          dotnet build ${{ inputs.solution }} \
+            --configuration ${{ inputs.configuration }} \
+            --no-restore \
+            --verbosity ${{ inputs.verbosity }}
 
       - name: Run Unit Tests
         run: |
-          dotnet test ${{ inputs.test }} --configuration ${{ inputs.configuration }} --no-restore \
+          dotnet test ${{ inputs.test }} \
+            --configuration ${{ inputs.configuration }} \
+            --no-restore \
             --verbosity ${{ inputs.verbosity }} \
-            --logger trx --collect "Code Coverage" \
+            --logger trx \
+            --collect "Code Coverage" \
             --output ./TestResults \
             --results-directory ./TestResults
 
