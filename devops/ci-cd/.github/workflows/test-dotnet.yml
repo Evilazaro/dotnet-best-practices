@@ -1,0 +1,34 @@
+name: "Build .NET Application"
+description: "Build .NET Application"
+
+inputs:
+  inputs:
+      working-directory:
+        description: 'The working directory for the build and test'
+        type: string
+        required: true
+      configuration:
+        description: 'The build configuration to use (allowed values: Debug, Release)'
+        type: string
+        default: 'Debug'
+        required: true
+      verbosity:
+        description: 'The verbosity level to use (allowed values: quiet, minimal, normal, detailed, diagnostic)'
+        type: string
+        default: 'minimal'
+        required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET
+      uses: ./composite/setup-dotnet.yml
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+        working-directory: ${{ inputs.working-directory }}
+        
+    - name: Run Unit Tests
+      run: |
+          dotnet test ${{ inputs.working-directory }} \
+            --configuration ${{ inputs.configuration }} \
+            --verbosity ${{ inputs.verbosity }}

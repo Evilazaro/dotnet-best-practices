@@ -1,4 +1,4 @@
-name: Build and Run Unit Tests for .NET Solutions
+name: Release .NET Application
 
 on:
   workflow_call:
@@ -28,7 +28,7 @@ on:
         required: true
 
 jobs:  
-  build-and-test:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Update OS packages
@@ -39,6 +39,12 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: ./composite/setup-dotnet.yml
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+          working-directory: ${{ inputs.working-directory }}
 
       - name: Build Application
         uses: ./composite/build-dotnet.yml
