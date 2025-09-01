@@ -1,0 +1,23 @@
+name: Build Bicep
+description: Build and validate Bicep files
+
+inputs:
+  bicep_file:
+    description: The Bicep file to build
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build Bicep
+      id: build-bicep
+      shell: bash
+      run: |
+        mkdir bicep-output
+        az bicep build --file ${{ inputs.bicep_file }} --outdir bicep-output
+
+    - name: Upload Bicep Output
+      uses: actions/upload-artifact@v4
+      with:
+        name: bicep-output
+        path: bicep-output
