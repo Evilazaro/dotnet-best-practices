@@ -1,0 +1,23 @@
+name: Setup Azure
+description: This action sets up the Azure environment for the workflow.
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Azure CLI
+      id: install-azure-cli
+      shell: bash
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    - name: Install Azure Developer CLI
+      id: install-azure-dev-cli
+      shell: bash
+      run: |
+        curl -sL https://aka.ms/InstallAzureDevCli | sudo bash
+
+    - name: Install Bicep
+      id: install-bicep
+      shell: bash
+      run: |
+        az bicep install
