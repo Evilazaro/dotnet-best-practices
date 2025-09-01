@@ -40,18 +40,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Application
-        uses: ./composite/build-dotnet.yml
+      - name: Set up .NET
+        uses: ./.github/actions/setup-dotnet
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: Build .NET Application
+        uses: ./.github/actions/build-dotnet
+        with:
           working-directory: ${{ inputs.working-directory }}
           configuration: ${{ inputs.configuration }}
           verbosity: ${{ inputs.verbosity }}
 
       - name: Run Unit Tests
-        uses: ./composite/test-dotnet.yml
+        uses: ./.github/actions/test-dotnet
         with:
-          dotnet-version: ${{ inputs.dotnet-version }}
           working-directory: ${{ inputs.test-working-directory }}
           configuration: ${{ inputs.configuration }}
           verbosity: ${{ inputs.verbosity }}

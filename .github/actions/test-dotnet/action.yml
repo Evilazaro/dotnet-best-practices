@@ -1,0 +1,26 @@
+name: "Build .NET Application"
+description: "Build .NET Application"
+
+inputs:
+  working-directory:
+    description: 'The working directory for the build and test'
+    required: true
+  configuration:
+    description: 'The build configuration to use (allowed values: Debug, Release)'
+    default: 'Debug'
+    required: true
+  verbosity:
+    description: 'The verbosity level to use (allowed values: quiet, minimal, normal, detailed, diagnostic)'
+    default: 'minimal'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Unit Tests
+      id: run-unit-tests
+      shell: bash
+      run: |
+        dotnet test ${{ inputs.working-directory }} \
+        --configuration ${{ inputs.configuration }} \
+        --verbosity ${{ inputs.verbosity }}

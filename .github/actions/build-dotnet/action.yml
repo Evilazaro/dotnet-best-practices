@@ -1,36 +1,25 @@
 name: "Build .NET Application"
+description: "Build and test a .NET application"
 
 inputs:
   working-directory:
     description: 'The working directory for the build and test'
-    type: string
-    required: true
-  dotnet-version:
-    description: "SDK version (e.g., 6.0.x, 7.0.x, 8.0.x, and 9.0.x)"
-    type: string
-    default: 9.0.x
     required: true
   configuration:
     description: 'The build configuration to use (allowed values: Debug, Release)'
-    type: string
     default: 'Debug'
     required: true
   verbosity:
     description: 'The verbosity level to use (allowed values: quiet, minimal, normal, detailed, diagnostic)'
-    type: string
     default: 'minimal'
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Setup .NET
-      uses: ./composite/setup-dotnet.yml
-      with:
-        dotnet-version: ${{ inputs.dotnet-version }}
-        working-directory: ${{ inputs.working-directory }}
-
     - name: Build Application
+      id: build-app
+      shell: bash
       run: |
         dotnet build ${{ inputs.working-directory }} \
         --configuration ${{ inputs.configuration }} \
@@ -38,7 +27,8 @@ runs:
         --verbosity ${{ inputs.verbosity }}
 
     - name: Upload artifacts
+      id: upload-artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: dotnet-build
-        path: ${{ inputs.working-directory }}/bin/${{ inputs.configuration }}/*.dll
+        name: dotnet-build-${{ inputs.configuration }}
+        path: ${{ inputs.working-directory }}/bin/
